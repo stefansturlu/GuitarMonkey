@@ -106,7 +106,7 @@ def get_variations(tuning: list[Notes], chord: list[Notes], hand_range=DEFAULT_H
 
         combinations = list(itertools.product(*valid_pos))
         for c in combinations:
-            if _validate_all_notes_present(neck, chord, c):
+            if validate_chord(neck, chord, c):
                 out.add(c)
     return list(out)
 
@@ -117,13 +117,13 @@ def get_variations_456(tuning: list[Notes], chord: list[Notes], hand_range=DEFAU
     variations_4 = get_variations(tuning[2:], chord, hand_range)
     correct_vars = []
     for v in variations:
-        if Notes.E.add(v[0]) == base_note:
+        if tuning[0].add(v[0]) == base_note:
             correct_vars.append(v)
     for v in variations_5:
-        if Notes.A.add(v[0]) == base_note:
+        if tuning[1].add(v[0]) == base_note:
             correct_vars.append(v)
     for v in variations_4:
-        if Notes.D.add(v[0]) == base_note:
+        if tuning[2].add(v[0]) == base_note:
             correct_vars.append(v)
     # sort by lowest non-zero. If equal, use sum of indices
     correct_vars.sort(key=lambda v: (min([z for z in v if z>0]),sum(v)))
@@ -137,6 +137,7 @@ def validate_chord(neck, chord: list[Notes], places: tuple[int]):
 
 
 def _validate_all_notes_present(neck, chord: list[Notes], places: tuple[int]):
+
     found_notes = set()
     for i, p in enumerate(places):
         found_notes.add(neck[p, i])

@@ -6,7 +6,6 @@ def generate_guitar_chord_svg(chord_positions):
     string_count = 6
     fret_count = 7 #max(chord_positions) + 1
 
-    x_margin = 5
 
     # Define dimensions
     neck_width = 120
@@ -14,6 +13,7 @@ def generate_guitar_chord_svg(chord_positions):
     fret_spacing = neck_height / (fret_count - 1)
     string_spacing = neck_width / (string_count - 1)
     dot_radius = 5
+    x_margin = 6
 
     # Create SVG drawing
     dwg = svgwrite.Drawing(size=(neck_width+2*x_margin, neck_height))
