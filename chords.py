@@ -24,24 +24,25 @@ class Notes(Enum):
 
     def add(self, i: int):
         return Notes((self.value + i) % 12)
-    
+
     def __str__(self):
+        # TODO: make flat or sharp conditional on chord
         notes_format = {
             Notes.C: "C",
-            Notes.Cs: "C# or Db",
+            Notes.Cs: "C♯",  # or D♭",
             Notes.D: "D",
-            Notes.Ds: "D# or Eb",
+            Notes.Ds: "D♯",  # or E♭",
             Notes.E: "E",
             Notes.F: "F",
-            Notes.Fs: "F# or Gb",
+            Notes.Fs: "F♯",  # or G♭",
             Notes.G: "G",
-            Notes.Gs: "G# or Ab",
+            Notes.Gs: "G♯",  # or A♭",
             Notes.A: "A",
-            Notes.As: "A# or Bb",
+            Notes.As: "A♯",  # or B♭",
             Notes.B: "B",
         }
-        return notes_format.get(self,"?")
-    
+        return notes_format.get(self, "?")
+
 
 class ChordTypes(Enum):
     major = (0, 4, 7)
@@ -55,7 +56,7 @@ class ChordTypes(Enum):
     minor7 = (0, 3, 7, 10)
     halfdim7 = (0, 3, 6, 10)
     dim7 = (0, 3, 6, 9)
-    
+
     def __str__(self):
         chord_format = {
             ChordTypes.major: "Major",
@@ -70,7 +71,7 @@ class ChordTypes(Enum):
             ChordTypes.halfdim7: "Half diminished 7",
             ChordTypes.dim7: "Diminished 7",
         }
-        return chord_format.get(self,"?")
+        return chord_format.get(self, "?")
 
 
 def get_chord_notes(note: Notes, chord_type: ChordTypes) -> list[Notes]:
@@ -91,9 +92,13 @@ def get_bool_neck(neck: NDArray, chord: list[Notes]) -> NDArray:
 def get_variations(tuning: list[Notes], chord: list[Notes], hand_range=DEFAULT_HAND_RANGE):
     neck = get_guitar_neck(tuning, hand_range)
     out = set()
-    open_notes = neck[0,]
+    open_notes = neck[
+        0,
+    ]
     for i in range(1, neck.shape[0] - hand_range + 1):
-        reachable_notes = neck[i : i + hand_range,]
+        reachable_notes = neck[
+            i : i + hand_range,
+        ]
         reachable_neck = np.vstack([open_notes, reachable_notes])
         correct_notes = get_bool_neck(reachable_neck, chord)
         frets, strings = correct_notes.nonzero()
@@ -109,6 +114,7 @@ def get_variations(tuning: list[Notes], chord: list[Notes], hand_range=DEFAULT_H
             if validate_chord(neck, chord, c):
                 out.add(c)
     return list(out)
+
 
 def get_variations_456(tuning: list[Notes], chord: list[Notes], hand_range=DEFAULT_HAND_RANGE):
     base_note = chord[0]
@@ -126,7 +132,7 @@ def get_variations_456(tuning: list[Notes], chord: list[Notes], hand_range=DEFAU
         if tuning[2].add(v[0]) == base_note:
             correct_vars.append(v)
     # sort by lowest non-zero. If equal, use sum of indices
-    correct_vars.sort(key=lambda v: (min([z for z in v if z>0]),sum(v)))
+    correct_vars.sort(key=lambda v: (min([z for z in v if z > 0]), sum(v)))
     return correct_vars
 
 
@@ -142,7 +148,6 @@ def _validate_all_notes_present(neck, chord: list[Notes], places: tuple[int]):
     for i, p in enumerate(places):
         found_notes.add(neck[p, i])
     return found_notes == {n.value for n in chord}
-
 
 
 if __name__ == "__main__":
@@ -170,6 +175,6 @@ if __name__ == "__main__":
         if Notes.D.add(v[0]) == base_note:
             correct_vars.append(v)
     # sort by lowest non-zero. If equal, use sum of indices
-    correct_vars.sort(key=lambda v: (min([z for z in v if z>0]),sum(v)))
+    correct_vars.sort(key=lambda v: (min([z for z in v if z > 0]), sum(v)))
     pprint(f"Total variations: {len(correct_vars)}. Showing first 20.")
     pprint(correct_vars[:20])
