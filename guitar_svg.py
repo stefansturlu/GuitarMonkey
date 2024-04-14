@@ -6,7 +6,8 @@ def generate_guitar_chord_svg(chord_positions: list[int], chord_notes: list[str]
     font = "Arial Narrow"
     black = svgwrite.rgb(80, 80, 80)
     red = svgwrite.rgb(250, 0, 0)
-    text_colour = svgwrite.rgb(250, 80, 80)
+    text_colour = svgwrite.rgb(220, 220, 220)
+    text_colour_dark = svgwrite.rgb(80, 80, 80)
 
     # Define constants
     string_count = 6
@@ -79,14 +80,15 @@ def generate_guitar_chord_svg(chord_positions: list[int], chord_notes: list[str]
             # Adjust position for E strings
             text_size = 9 + 3 * (fret_num == 0)
             text_style = f"font-family: {font}, sans-serif; font-size: {text_size}px; font-weight: lighter"
+            colour = text_colour if fret_num>0 else text_colour_dark
 
             dwg.add(
                 dwg.text(
                     chord_notes[string_num],
                     insert=(x, y),
                     text_anchor="middle",
-                    stroke=text_colour,
-                    fill=text_colour,
+                    stroke=colour,
+                    fill=colour,
                     style=text_style,
                 )
             )
